@@ -38,15 +38,15 @@ export interface TenantDocumentSchema {
 }
 
 /** adds a branch reference to a document */
-export interface BranchDocumentSchema {
-  /** the `_id` of the branch the document belongs to
+export interface ApplicationDocumentSchema {
+  /** the `_id` of the application the document belongs to
    *
    * @nullable
    * @format ObjectId
    * @pattern ^[a-f\d]{24}$
    * @asType string
    */
-  branch: ObjectId
+  application: ObjectId
 }
 
 export interface ArchivableDocumentSchema {
@@ -62,7 +62,7 @@ export interface ArchivableDocumentSchema {
 export interface DocumentTemplates {
   userDocumentSchema: Schema<UserDocumentSchema>
   tenantDocumentSchema: Schema<TenantDocumentSchema>
-  branchDocumentSchema: Schema<BranchDocumentSchema>
+  applicationDocumentSchema: Schema<ApplicationDocumentSchema>
   archivableDocumentSchema: Schema<ArchivableDocumentSchema>
 }
 
@@ -80,8 +80,8 @@ const plugin: FastifyPluginCallback = fp(
       tenant: { type: Types.ObjectId, default: null, ref: 'Tenant' },
     })
 
-    const branchDocumentSchema = new Schema<BranchDocumentSchema>({
-      branch: { type: Types.ObjectId, default: null, ref: 'Branch' },
+    const applicationDocumentSchema = new Schema<ApplicationDocumentSchema>({
+      application: { type: Types.ObjectId, default: null, ref: 'Branch' },
     })
 
     const archivableDocumentSchema = new Schema<ArchivableDocumentSchema>({
@@ -91,7 +91,7 @@ const plugin: FastifyPluginCallback = fp(
     server.decorate<DocumentTemplates>('templates', {
       userDocumentSchema,
       tenantDocumentSchema,
-      branchDocumentSchema,
+      applicationDocumentSchema,
       archivableDocumentSchema,
     })
 

@@ -1,5 +1,6 @@
 import type { FastifyPluginCallback } from 'fastify'
 
+import application from './application'
 import tenant from './tenant'
 
 const routes: FastifyPluginCallback = async function (server) {
@@ -18,6 +19,7 @@ const routes: FastifyPluginCallback = async function (server) {
   // collect access control context information
   // server.addHook('preHandler', server.accessCollect)
 
+  await server.register(application, { prefix: '/applications' })
   await server.register(tenant, { prefix: '/tenants' })
 }
 
