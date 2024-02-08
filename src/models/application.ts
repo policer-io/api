@@ -20,7 +20,7 @@ const model: FastifyPluginCallback = fp(
 
     schema.add(server.templates.tenantDocumentSchema)
 
-    // branch name must be unique for each tenant
+    // application name must be unique for each tenant
     schema.index({ name: 1, tenant: 1 }, { unique: true })
 
     server.models.Application = model<ApplicationSchema>('Application', schema)
@@ -42,7 +42,7 @@ export default model
 
 // INTERFACES and TYPES
 
-/** a application represents one organization (company) using the app  */
+/** a application represents one application or service */
 export interface ApplicationSchema {
   /**
    * name of the application

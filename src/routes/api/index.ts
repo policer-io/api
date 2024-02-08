@@ -1,24 +1,17 @@
 import type { FastifyPluginCallback } from 'fastify'
 
+import logic from './logic'
 import application from './application'
 import tenant from './tenant'
 
 const routes: FastifyPluginCallback = async function (server) {
   // collect all possible authentication information
-  // server.addHook(
-  //   'preHandler',
-  //   server.authCollect([
-  //     server.collectors.collectConsultationSession,
-  //     server.collectors.collectDeviceSession,
-  //     server.collectors.collectEmployeeSession,
-  //     server.collectors.collectOAuthUser,
-  //     server.collectors.collectApiKey,
-  //   ])
-  // )
+  server.addHook('preHandler', server.authCollect([server.collectors.collectOAuthUser, server.collectors.collectApiKey]))
 
   // collect access control context information
   // server.addHook('preHandler', server.accessCollect)
 
+  await server.register(logic, { prefix: '/logics' })
   await server.register(application, { prefix: '/applications' })
   await server.register(tenant, { prefix: '/tenants' })
 }

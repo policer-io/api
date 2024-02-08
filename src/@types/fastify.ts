@@ -6,7 +6,7 @@ import type { QueryUtility, Models, ModelName } from '../models'
 import type { RawReplyDefaultExpression, RawRequestDefaultExpression, RouteGenericInterface, RouteOptions } from 'fastify'
 import { DocumentTemplates } from '../plugins/documents'
 import { Api } from './api'
-import { AuthContext, AuthVerifiers } from './auth'
+import { AuthCollect, AuthCollectors, AuthContext, AuthVerifiers } from './auth'
 
 declare module 'fastify' {
   export interface FastifyInstance {
@@ -15,6 +15,8 @@ declare module 'fastify' {
     models: Models
     queryUtil: QueryUtility
     generator: SchemaGenerator
+    authCollect: AuthCollect
+    collectors: AuthCollectors
     verifiers: AuthVerifiers
   }
 

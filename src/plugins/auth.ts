@@ -62,7 +62,7 @@ const plugin: FastifyPluginCallback = fp(
       },
     }
 
-    server.decorate('collectors', collectors)
+    server.decorate('collectors', collectors as AuthCollectors)
 
     server.decorate<AuthCollect>('authCollect', function (collectors) {
       return async function (request, reply) {

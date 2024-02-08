@@ -4,7 +4,6 @@
 [![fastify](https://img.shields.io/static/v1?label=built+with&message=fastify&color=363636)](https://www.fastify.io/)
 [![Docker](https://img.shields.io/static/v1?label=shipped+with&message=Docker&color=287cf9)](https://www.docker.com/)
 [![embrio.tech](https://img.shields.io/static/v1?label=by&message=EMBRIO.tech&color=24ae5f)](https://embrio.tech)
-[![pcrg](https://img.shields.io/static/v1?label=for&message=PCRG&color=a5d7d2)](https://pharma.unibas.ch/de/research/research-groups/pharmaceutical-care-2170/)
 
 An API service to interact with Policer.
 
