@@ -3,6 +3,7 @@
  * @format ObjectId
  * @pattern ^[a-f\d]{24}$
  * @asType string
+ * @example "507f1f77bcf86cd799439022"
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ObjectId = any

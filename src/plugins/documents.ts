@@ -27,12 +27,13 @@ export interface UserDocumentSchema {
 
 /** adds a tenant reference to a document */
 export interface TenantDocumentSchema {
-  /** the `_id` of the tenant the document belongs to
+  /**
+   * the `_id` of the tenant the document belongs to
    *
-   * @nullable
    * @format ObjectId
    * @pattern ^[a-f\d]{24}$
    * @asType string
+   * @example "507f1f77bcf86cd799439022"
    */
   tenant: ObjectId
 }
@@ -41,10 +42,10 @@ export interface TenantDocumentSchema {
 export interface ApplicationDocumentSchema {
   /** the `_id` of the application the document belongs to
    *
-   * @nullable
    * @format ObjectId
    * @pattern ^[a-f\d]{24}$
    * @asType string
+   * @example "507f1f77bcf86cd799439033"
    */
   application: ObjectId
 }

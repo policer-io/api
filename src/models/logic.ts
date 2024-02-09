@@ -92,5 +92,5 @@ export type LogicSchemaExtended = LogicSchema & TenantDocumentSchema & Applicati
 export type LogicRead = DocumentRead<LogicSchemaExtended>
 export type LogicItemResponse = Api.ItemResponse<LogicRead>
 export type LogicListResponse = Api.ListResponse<LogicRead>
-export type LogicCreate = DocumentCreate<LogicSchema, 'name' | 'rule' | 'type'>
+export type LogicCreate = DocumentCreate<LogicSchema & ApplicationDocumentSchema, 'name' | 'rule' | 'type' | 'application'>
 export type LogicUpdate = DocumentUpdate<LogicSchema>
