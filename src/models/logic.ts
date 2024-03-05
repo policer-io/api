@@ -48,7 +48,7 @@ const model: FastifyPluginCallback = fp(
     schema.add(server.templates.tenantDocumentSchema)
     schema.add(server.templates.applicationDocumentSchema)
 
-    // branch name must be unique for each tenant
+    // logic name must be unique for each tenant and application
     schema.index({ name: 1, tenant: 1, application: 1 }, { unique: true })
 
     server.models.Logic = model<LogicSchema>('Logic', schema)

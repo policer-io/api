@@ -24,9 +24,6 @@ const model: FastifyPluginCallback = fp(
     schema.add(server.templates.tenantDocumentSchema)
     schema.add(server.templates.applicationDocumentSchema)
 
-    // branch name must be unique for each tenant
-    schema.index({ name: 1, tenant: 1, application: 1 }, { unique: true })
-
     server.models.Permission = model<PermissionSchema>('Permission', schema)
 
     // await server.models.Permission.syncIndexes()

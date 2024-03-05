@@ -18,6 +18,7 @@ const model: FastifyPluginCallback = fp(
             projection: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
           },
           merge: {
+            condition: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
             filter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
             projection: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
           },

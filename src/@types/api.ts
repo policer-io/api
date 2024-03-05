@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-unused-vars */
 export declare namespace Api {
   export interface Payload<Data = unknown> {
-    /** the status code */
+    /**
+     * the status code
+     *
+     * @example 200
+     */
     statusCode: number
 
-    /** the status description */
+    /**
+     * the status description
+     *
+     * @example "OK"
+     */
     status: string
 
     /** the info message */
