@@ -4,6 +4,7 @@ import { ApiError } from '.'
 import { STATUS_CODES } from 'http'
 import type { Model, Query } from 'mongoose'
 import type { Api } from '../@types'
+import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
 
 type RouteName = 'create' | 'read' | 'list' | 'update' | 'remove'
 
@@ -49,7 +50,7 @@ interface PluginOptions {
 }
 
 const plugin: FastifyPluginCallback<PluginOptions> = async function (server, options) {
-  const { model, enable = {}, options: routesOptions = {}, populate = [] } = options
+  const { model, target = model.toLocaleLowerCase(), enable = {}, options: routesOptions = {}, populate = [] } = options
   const { create = true, read = true, list = true, update = true, remove = true } = enable
 
   server.log.debug({ create, read, list, update, remove }, `${model} route attaching...`)
@@ -79,6 +80,14 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const document = new server.models[model](body)
         return reply.payload(201, `${model} created`, await document.save())
       },
+      preSerialization: async function (request, _reply, payload) {
+        const {
+          auth: { user },
+        } = request
+        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        server.publisher.emit(`${target}:create`, { tenant: user?.tenant, data })
+        return payload
+      },
       schema: {
         description: `Create a ${model} document.`,
         tags: [model],
@@ -91,7 +100,7 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
     })
   }
 
-  // reade one by _id route
+  // read one by _id route
   if (read) {
     server.route<Api.RouteRead>({
       method: 'GET',
@@ -104,6 +113,14 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const document = await (server.models[model] as Model<unknown>).findById(_id, {}).populate(populate).exec()
         if (!document) throw new ApiError(404, { _id, model: model }, `${model} with _id ${_id} does not exist.`)
         return reply.payload(200, `${model} document ${_id} retrieved`, document)
+      },
+      preSerialization: async function (request, _reply, payload) {
+        const {
+          auth: { user },
+        } = request
+        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        server.publisher.emit(`${target}:read`, { tenant: user?.tenant, data })
+        return payload
       },
       schema: {
         description: `Get one ${model} document by \`_id\`.`,
@@ -138,6 +155,14 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const count = await server.models[model].countDocuments(finalFilter).exec()
         return reply.payload(200, `List of ${model}s retrieved`, documents, count)
       },
+      preSerialization: async function (request, _reply, payload) {
+        const {
+          auth: { user },
+        } = request
+        const { data, count } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
+        server.publisher.emit(`${target}:list`, { tenant: user?.tenant, data: { data, count } })
+        return payload
+      },
       schema: {
         description: `Query a list of ${model} documents. Querystring is parsed with [qs](https://github.com/ljharb/qs). \
           Swagger UI does not support parsing with qs. Thus, querying is limited with Swagger UI.`,
@@ -168,6 +193,14 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const saved = await document.save()
         return reply.payload(200, `${model} document ${_id} updated`, saved)
       },
+      preSerialization: async function (request, _reply, payload) {
+        const {
+          auth: { user },
+        } = request
+        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
+        server.publisher.emit(`${target}:update`, { tenant: user?.tenant, data })
+        return payload
+      },
       schema: {
         description: `Update properties of a ${model} document by \`_id\`.`,
         tags: [model],
@@ -195,6 +228,14 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const document = await (server.models[model] as Model<unknown>).findByIdAndDelete(_id).exec()
         if (!document) throw new ApiError(404, { _id, model: model }, `${model} with _id ${_id} does not exist.`)
         return reply.payload(200, `${model} document ${_id} deleted`, document)
+      },
+      preSerialization: async function (request, _reply, payload) {
+        const {
+          auth: { user },
+        } = request
+        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
+        server.publisher.emit(`${target}:remove`, { tenant: user?.tenant, data })
+        return payload
       },
       schema: {
         description: `Delete a ${model} document by \`_id\`.`,

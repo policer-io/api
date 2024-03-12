@@ -7,6 +7,8 @@ import type { RawReplyDefaultExpression, RawRequestDefaultExpression, RouteGener
 import { DocumentTemplates } from '../plugins/documents'
 import { Api } from './api'
 import { AuthCollect, AuthCollectors, AuthContext, AuthVerifiers } from './auth'
+import { EventPublisher } from './event'
+import type { Server } from 'socket.io'
 
 declare module 'fastify' {
   export interface FastifyInstance {
@@ -18,6 +20,8 @@ declare module 'fastify' {
     authCollect: AuthCollect
     collectors: AuthCollectors
     verifiers: AuthVerifiers
+    publisher: EventPublisher
+    io: Server
   }
 
   export interface FastifyRequest {

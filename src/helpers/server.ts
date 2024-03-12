@@ -3,6 +3,7 @@ import { fastifyOptions } from '../config'
 import plugins from '../plugins'
 import routes from '../routes'
 import { errorHandler } from './error'
+import listeners from '../listeners'
 
 /**
  * server factory function to register all plugins
@@ -18,6 +19,9 @@ export async function buildServer() {
 
   // register plugins
   await server.register(plugins)
+
+  // register listeners
+  await server.register(listeners)
 
   // register api routes
   await server.register(routes)

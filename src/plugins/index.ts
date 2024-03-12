@@ -12,11 +12,19 @@ import swagger from './swagger'
 import schema from './schema'
 import { modelTags } from '../models'
 import auth from './auth'
+import publisher from './publisher'
+import socket from './socket'
 
 const plugin: FastifyPluginCallback = fp(
   async function (server) {
     // add kill handlers
     await server.register(traps)
+
+    // add event publisher plugin
+    await server.register(publisher)
+
+    // add socket io
+    await server.register(socket)
 
     // connect to MongoDB
     await server.register(mongoose)
