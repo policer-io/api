@@ -9,6 +9,7 @@ import { Api } from './api'
 import { AuthCollect, AuthCollectors, AuthContext, AuthVerifiers } from './auth'
 import { EventPublisher } from './event'
 import type { Server } from 'socket.io'
+import type { AccessCollect, AccessContext } from './access'
 
 declare module 'fastify' {
   export interface FastifyInstance {
@@ -18,6 +19,7 @@ declare module 'fastify' {
     queryUtil: QueryUtility
     generator: SchemaGenerator
     authCollect: AuthCollect
+    accessCollect: AccessCollect
     collectors: AuthCollectors
     verifiers: AuthVerifiers
     publisher: EventPublisher
@@ -27,6 +29,8 @@ declare module 'fastify' {
   export interface FastifyRequest {
     /** an object to store the auth context and its attributes */
     auth: AuthContext
+    /** and object to store all attributes and context for access control */
+    access: AccessContext
     model?: ModelName
   }
 

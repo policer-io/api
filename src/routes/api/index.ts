@@ -11,7 +11,7 @@ const routes: FastifyPluginCallback = async function (server) {
   server.addHook('preHandler', server.authCollect([server.collectors.collectOAuthUser, server.collectors.collectApiKey]))
 
   // collect access control context information
-  // server.addHook('preHandler', server.accessCollect)
+  server.addHook('preHandler', server.accessCollect)
 
   await server.register(permission, { prefix: '/permissions' })
   await server.register(role, { prefix: '/roles' })

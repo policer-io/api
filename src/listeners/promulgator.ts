@@ -2,14 +2,18 @@ import { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
 import type { EventListener, ObjectId } from '../@types'
 
+type ExpectedPayload = { tenant?: ObjectId; application?: ObjectId; data?: { data: unknown[]; count: number } | unknown }
+
 const plugin: FastifyPluginAsync = async function (server) {
   server.log.debug('Promulgator listener plugin registering...')
 
   // TODO: implement
-  const listener: EventListener<{ tenant?: ObjectId; application?: ObjectId }> = async (event, payload) => {
+  const listener: EventListener<ExpectedPayload> = async (event, payload) => {
     try {
       server.log.info({ payload }, `Handling event ${event.toString()}`)
-      server.io.emit('policy:update', payload.tenant, payload.application)
+      if (!payload.tenant) throw new Error(`Event ${event.toString()} payload lacks tenant _id!`)
+      if (!payload.application) throw new Error(`Event ${event.toString()} payload lacks application _id!`)
+      server.io.emit(`${payload.tenant}/${payload.application}/policy:update`)
     } catch (error) {
       server.log.error({ err: error, event, payload }, `Error while handling event ${event.toString()}`)
     }

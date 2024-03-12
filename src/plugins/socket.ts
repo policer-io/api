@@ -15,8 +15,12 @@ const plugin: FastifyPluginAsync<ServerOptions> = async function (server) {
   server.decorate('io', new Server(server.server, options))
 
   server.addHook('onReady', async function () {
-    server.io.on('connection', ({ id }) => {
-      server.log.debug({ id }, 'New socket connection')
+    server.io.on('connection', (socket) => {
+      server.log.debug({ id: socket.id }, 'New socket connection')
+
+      socket.on('disconnect', () => {
+        server.log.debug({ id: socket.id }, 'Socket disconnected')
+      })
     })
   })
 

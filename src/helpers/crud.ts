@@ -85,7 +85,7 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
           auth: { key },
         } = request
         const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:create`, { tenant: key?.tenant, data })
+        server.publisher.emit(`${target}:create`, { tenant: key?.tenant, application: data?.application, data })
         return payload
       },
       schema: {
@@ -119,7 +119,7 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
           auth: { key },
         } = request
         const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:read`, { tenant: key?.tenant, data })
+        server.publisher.emit(`${target}:read`, { tenant: key?.tenant, application: data?.application, data })
         return payload
       },
       schema: {
@@ -197,8 +197,8 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        server.publisher.emit(`${target}:update`, { tenant: key?.tenant, data })
+        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        server.publisher.emit(`${target}:update`, { tenant: key?.tenant, application: data?.application, data })
         return payload
       },
       schema: {
@@ -233,8 +233,8 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        server.publisher.emit(`${target}:remove`, { tenant: key?.tenant, data })
+        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        server.publisher.emit(`${target}:remove`, { tenant: key?.tenant, application: data?.application, data })
         return payload
       },
       schema: {
