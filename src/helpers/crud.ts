@@ -82,10 +82,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       },
       preSerialization: async function (request, _reply, payload) {
         const {
-          auth: { user },
+          auth: { key },
         } = request
         const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:create`, { tenant: user?.tenant, data })
+        server.publisher.emit(`${target}:create`, { tenant: key?.tenant, data })
         return payload
       },
       schema: {
@@ -116,10 +116,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       },
       preSerialization: async function (request, _reply, payload) {
         const {
-          auth: { user },
+          auth: { key },
         } = request
         const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:read`, { tenant: user?.tenant, data })
+        server.publisher.emit(`${target}:read`, { tenant: key?.tenant, data })
         return payload
       },
       schema: {
@@ -157,10 +157,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       },
       preSerialization: async function (request, _reply, payload) {
         const {
-          auth: { user },
+          auth: { key },
         } = request
         const { data, count } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        server.publisher.emit(`${target}:list`, { tenant: user?.tenant, data: { data, count } })
+        server.publisher.emit(`${target}:list`, { tenant: key?.tenant, data: { data, count } })
         return payload
       },
       schema: {
@@ -195,10 +195,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       },
       preSerialization: async function (request, _reply, payload) {
         const {
-          auth: { user },
+          auth: { key },
         } = request
         const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        server.publisher.emit(`${target}:update`, { tenant: user?.tenant, data })
+        server.publisher.emit(`${target}:update`, { tenant: key?.tenant, data })
         return payload
       },
       schema: {
@@ -231,10 +231,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       },
       preSerialization: async function (request, _reply, payload) {
         const {
-          auth: { user },
+          auth: { key },
         } = request
         const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        server.publisher.emit(`${target}:remove`, { tenant: user?.tenant, data })
+        server.publisher.emit(`${target}:remove`, { tenant: key?.tenant, data })
         return payload
       },
       schema: {
