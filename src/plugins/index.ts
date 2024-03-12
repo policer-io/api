@@ -14,6 +14,7 @@ import { modelTags } from '../models'
 import auth from './auth'
 import publisher from './publisher'
 import socket from './socket'
+import access from './access'
 
 const plugin: FastifyPluginCallback = fp(
   async function (server) {
@@ -52,6 +53,9 @@ const plugin: FastifyPluginCallback = fp(
 
     // auth
     await server.register(auth)
+
+    // access control
+    await server.register(access)
 
     // payload and status formatter
     await server.register(payload)
