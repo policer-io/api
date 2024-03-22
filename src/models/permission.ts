@@ -1,7 +1,8 @@
 import type { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
-import type { Api, DocumentCreate, DocumentRead, DocumentUpdate, ObjectId } from '../@types'
+import type { Api, DocumentCreate, DocumentRead, DocumentUpdate, ObjectIdNullable } from '../@types'
 import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
+import { LogicRead } from './logic'
 
 const model: FastifyPluginCallback = fp(
   async function (server) {
@@ -44,7 +45,7 @@ export default model
 // INTERFACES and TYPES
 
 /** a permission documents allows a certain action and optionally defines corresponding constraints  */
-export interface PermissionSchema {
+export interface PermissionSchema<Logic = ObjectIdNullable> {
   /**
    * name of the permission
    *
@@ -63,7 +64,7 @@ export interface PermissionSchema {
    *
    * @example null
    */
-  condition: ObjectId | null
+  condition: Logic
 
   /**
    * reference to the Logic returning possible DB query filters for a list of a given resource.
@@ -72,7 +73,7 @@ export interface PermissionSchema {
    *
    * @example null
    */
-  filter: ObjectId | null
+  filter: Logic
 
   /**
    * reference to the Logic returning a projection describing which properties of the database resource can be accessed
@@ -81,10 +82,12 @@ export interface PermissionSchema {
    *
    * @example null
    */
-  projection: ObjectId | null
+  projection: Logic
 }
 
-export type PermissionSchemaExtended = PermissionSchema & TenantDocumentSchema & ApplicationDocumentSchema
+export type PermissionSchemaExtended<Logic = ObjectIdNullable> = PermissionSchema<Logic> & TenantDocumentSchema & ApplicationDocumentSchema
+
+export type PermissionSchemaLogicPopulated = PermissionSchemaExtended<LogicRead | Record<string, unknown> | null>
 
 export type PermissionRead = DocumentRead<PermissionSchemaExtended>
 export type PermissionItemResponse = Api.ItemResponse<PermissionRead>

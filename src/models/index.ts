@@ -3,8 +3,9 @@ import type { Model } from 'mongoose'
 import Permission, { PermissionSchema } from './permission'
 import Role, { RoleSchema } from './role'
 import Logic, { LogicSchema } from './logic'
-import Application, { ApplicationSchema } from './application'
+import Application, { ApplicationPolicy, ApplicationSchema } from './application'
 import Tenant, { TenantSchema } from './tenant'
+import { Api } from '../@types'
 
 const models = { Permission, Role, Logic, Application, Tenant } as const
 
@@ -18,7 +19,11 @@ export type Models = {
   Tenant: Model<TenantSchema>
 }
 
-export type QueryUtility = unknown
+export type QueryUtility = {
+  Application: {
+    getPolicy: (_id: Api.IdParam['_id']) => Promise<ApplicationPolicy>
+  }
+}
 
 export default models
 

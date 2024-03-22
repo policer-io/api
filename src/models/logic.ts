@@ -42,6 +42,7 @@ const model: FastifyPluginCallback = fp(
       {
         optimisticConcurrency: true,
         timestamps: true,
+        minimize: false, // allows saving empty objects
       }
     )
 

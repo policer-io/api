@@ -54,7 +54,7 @@ export default model
 type Description = string
 
 /** a role documents implements a rule evaluating the access control context  */
-export interface RoleSchema {
+export interface RoleSchema<Permission = ObjectId> {
   /**
    * descriptive name of the role
    *
@@ -68,7 +68,7 @@ export interface RoleSchema {
   /**
    * the list of permissions a role has
    */
-  permissions: ObjectId[]
+  permissions: Permission[]
 
   /**
    * references to parent roles that are inherited by this role
@@ -76,7 +76,7 @@ export interface RoleSchema {
   inherits: ObjectId[]
 }
 
-export type RoleSchemaExtended = RoleSchema & TenantDocumentSchema & ApplicationDocumentSchema
+export type RoleSchemaExtended<Permission = ObjectId> = RoleSchema<Permission> & TenantDocumentSchema & ApplicationDocumentSchema
 
 export type RoleRead = DocumentRead<RoleSchemaExtended>
 export type RoleItemResponse = Api.ItemResponse<RoleRead>

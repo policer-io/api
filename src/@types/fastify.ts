@@ -17,7 +17,7 @@ declare module 'fastify' {
     templates: DocumentTemplates
     models: Models
     queryUtil: QueryUtility
-    generator: SchemaGenerator
+    createSchema: SchemaGenerator['createSchema']
     authCollect: AuthCollect
     accessCollect: AccessCollect
     collectors: AuthCollectors

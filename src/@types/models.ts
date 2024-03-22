@@ -9,6 +9,11 @@
 export type ObjectId = any
 
 /**
+ * @nullable
+ */
+export type ObjectIdNullable = ObjectId
+
+/**
  * user identifier
  *
  * @format uuid

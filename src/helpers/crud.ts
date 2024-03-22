@@ -91,9 +91,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       schema: {
         description: `Create a ${model} document.`,
         tags: [model],
-        body: server.generator.createSchema(`${model}Create`),
+        body: server.createSchema(`${model}Create`),
         response: {
-          201: { ...server.generator.createSchema(`${model}ItemResponse`), description: STATUS_CODES[201] },
+          201: { ...server.createSchema(`${model}ItemResponse`), description: STATUS_CODES[201] },
         },
       },
       ...routesOptions.create,
@@ -125,9 +125,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       schema: {
         description: `Get one ${model} document by \`_id\`.`,
         tags: [model],
-        params: server.generator.createSchema('Api.IdParam'),
+        params: server.createSchema('Api.IdParam'),
         response: {
-          200: { ...server.generator.createSchema(`${model}ItemResponse`), description: STATUS_CODES[200] },
+          200: { ...server.createSchema(`${model}ItemResponse`), description: STATUS_CODES[200] },
         },
       },
       ...routesOptions.read,
@@ -167,9 +167,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         description: `Query a list of ${model} documents. Querystring is parsed with [qs](https://github.com/ljharb/qs). \
           Swagger UI does not support parsing with qs. Thus, querying is limited with Swagger UI.`,
         tags: [model],
-        querystring: server.generator.createSchema('Api.ListQuery'),
+        querystring: server.createSchema('Api.ListQuery'),
         response: {
-          200: { ...server.generator.createSchema(`${model}ListResponse`), description: STATUS_CODES[200] },
+          200: { ...server.createSchema(`${model}ListResponse`), description: STATUS_CODES[200] },
         },
       },
       ...routesOptions.list,
@@ -204,10 +204,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       schema: {
         description: `Update properties of a ${model} document by \`_id\`.`,
         tags: [model],
-        body: server.generator.createSchema(`${model}Update`),
-        params: server.generator.createSchema('Api.IdParam'),
+        body: server.createSchema(`${model}Update`),
+        params: server.createSchema('Api.IdParam'),
         response: {
-          200: { ...server.generator.createSchema(`${model}ItemResponse`), description: STATUS_CODES[200] },
+          200: { ...server.createSchema(`${model}ItemResponse`), description: STATUS_CODES[200] },
         },
       },
       ...routesOptions.update,
@@ -240,9 +240,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
       schema: {
         description: `Delete a ${model} document by \`_id\`.`,
         tags: [model],
-        params: server.generator.createSchema('Api.IdParam'),
+        params: server.createSchema('Api.IdParam'),
         response: {
-          200: { ...server.generator.createSchema(`${model}ItemResponse`), description: STATUS_CODES[200] },
+          200: { ...server.createSchema(`${model}ItemResponse`), description: STATUS_CODES[200] },
         },
       },
       ...routesOptions.remove,
