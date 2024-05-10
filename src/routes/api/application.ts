@@ -6,9 +6,7 @@ import { STATUS_CODES } from 'http'
 const routes: FastifyPluginCallback = async function (server) {
   server.decorateRequest('model', 'Application')
 
-  server.addHook('preHandler', server.auth([server.verifiers.requireApiKey, server.verifiers.requireOAuthUser], { relation: 'or' }))
-
-  await server.register(crud, { model: 'Application' })
+  await server.register(crud, { model: 'Application', verifiers: ['requireApiKey', 'requireOAuthUser'] })
 
   server.route<Api.RouteRead>({
     method: 'GET',
