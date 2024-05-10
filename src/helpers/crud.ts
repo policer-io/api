@@ -3,7 +3,7 @@ import type { ModelName } from '../models'
 import { ApiError } from '.'
 import { STATUS_CODES } from 'http'
 import type { Model, Query } from 'mongoose'
-import type { Api } from '../@types'
+import type { Api, VerifierName } from '../@types'
 import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
 
 type RouteName = 'create' | 'read' | 'list' | 'update' | 'remove'
@@ -25,7 +25,7 @@ interface PluginOptions {
   }>
 
   /** required verifiers (OR) */
-  // verifiers?: VerifierName[]
+  verifiers?: VerifierName[]
 
   /** populate fields on `read`, `list` and `update` */
   populate?: Parameters<Query<unknown, unknown>['populate']>[0]
@@ -50,22 +50,22 @@ interface PluginOptions {
 }
 
 const plugin: FastifyPluginCallback<PluginOptions> = async function (server, options) {
-  const { model, target = model.toLocaleLowerCase(), enable = {}, options: routesOptions = {}, populate = [] } = options
+  const { model, target = model.toLocaleLowerCase(), enable = {}, options: routesOptions = {}, verifiers, populate = [] } = options
   const { create = true, read = true, list = true, update = true, remove = true } = enable
 
   server.log.debug({ create, read, list, update, remove }, `${model} route attaching...`)
 
   if (!model) throw new Error('Can not create crud routes for undefined `model`! Specify it in the CRUD plugin options.')
 
-  // if (verifiers) {
-  //   server.addHook(
-  //     'preHandler',
-  //     server.auth(
-  //       verifiers.map((verifier) => server.verifiers[verifier]),
-  //       { relation: 'or' }
-  //     )
-  //   )
-  // }
+  if (verifiers) {
+    server.addHook(
+      'preHandler',
+      server.auth(
+        verifiers.map((verifier) => server.verifiers[verifier]),
+        { relation: 'or' }
+      )
+    )
+  }
 
   // create one route
   if (create) {
@@ -84,8 +84,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:create`, { tenant: key?.tenant, application: data?.application, data })
+        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        if (statusCode === 201) {
+          server.publisher.emit(`${target}:create`, { tenant: key?.tenant, application: data?.application, data })
+        }
         return payload
       },
       schema: {
@@ -118,8 +120,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:read`, { tenant: key?.tenant, application: data?.application, data })
+        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        if (statusCode === 200) {
+          server.publisher.emit(`${target}:read`, { tenant: key?.tenant, application: data?.application, data })
+        }
         return payload
       },
       schema: {
@@ -159,8 +163,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data, count } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        server.publisher.emit(`${target}:list`, { tenant: key?.tenant, data: { data, count } })
+        const { data, count, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
+        if (statusCode === 200) {
+          server.publisher.emit(`${target}:list`, { tenant: key?.tenant, data: { data, count } })
+        }
         return payload
       },
       schema: {
@@ -197,8 +203,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:update`, { tenant: key?.tenant, application: data?.application, data })
+        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        if (statusCode === 200) {
+          server.publisher.emit(`${target}:update`, { tenant: key?.tenant, application: data?.application, data })
+        }
         return payload
       },
       schema: {
@@ -233,8 +241,10 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         const {
           auth: { key },
         } = request
-        const { data } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        server.publisher.emit(`${target}:remove`, { tenant: key?.tenant, application: data?.application, data })
+        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
+        if (statusCode === 200) {
+          server.publisher.emit(`${target}:remove`, { tenant: key?.tenant, application: data?.application, data })
+        }
         return payload
       },
       schema: {
