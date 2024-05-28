@@ -4,9 +4,21 @@ import { ApiError } from '.'
 import { STATUS_CODES } from 'http'
 import type { Model, Query } from 'mongoose'
 import type { Api, VerifierName } from '../@types'
-import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
 
-type RouteName = 'create' | 'read' | 'list' | 'update' | 'remove'
+export type RouteName = 'create' | 'read' | 'list' | 'update' | 'remove'
+
+export interface EventPayload<Data> {
+  /** the name of the model */
+  model: ModelName
+  /** the operation applied on the model */
+  operation: RouteName
+  /** the document/documents after the operation is applied */
+  data: Data
+  /** the document/documents before the operation is applied (only for update operation) */
+  original?: Data
+  /** the total document count (only for list operation) */
+  count?: number
+}
 
 interface PluginOptions {
   /** the name of the model to create the crud routes from */
@@ -78,17 +90,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         // TODO: set createdBy, tenant, branch from user
         server.log.debug(body, 'Body of create request')
         const document = new server.models[model](body)
-        return reply.payload(201, `${model} created`, await document.save())
-      },
-      preSerialization: async function (request, _reply, payload) {
-        const {
-          auth: { key },
-        } = request
-        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        if (statusCode === 201) {
-          server.publisher.emit(`${target}:create`, { tenant: key?.tenant, application: data?.application, data })
-        }
-        return payload
+        const saved = (await document.save()).toObject()
+        server.publisher.emit<EventPayload<typeof saved>>(`${target}:create`, { model, operation: 'create', data: saved })
+        return reply.payload(201, `${model} created`, saved)
       },
       schema: {
         description: `Create a ${model} document.`,
@@ -114,17 +118,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         } = request
         const document = await (server.models[model] as Model<unknown>).findById(_id, {}).populate(populate).exec()
         if (!document) throw new ApiError(404, { _id, model: model }, `${model} with _id ${_id} does not exist.`)
-        return reply.payload(200, `${model} document ${_id} retrieved`, document)
-      },
-      preSerialization: async function (request, _reply, payload) {
-        const {
-          auth: { key },
-        } = request
-        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        if (statusCode === 200) {
-          server.publisher.emit(`${target}:read`, { tenant: key?.tenant, application: data?.application, data })
-        }
-        return payload
+        const data = document.toObject()
+        server.publisher.emit<EventPayload<typeof data>>(`${target}:read`, { model, operation: 'read', data })
+        return reply.payload(200, `${model} document ${_id} retrieved`, data)
       },
       schema: {
         description: `Get one ${model} document by \`_id\`.`,
@@ -155,19 +151,13 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
 
         server.log.debug({ filter: finalFilter, sort, skip, limit }, 'query')
 
-        const documents = await (server.models[model] as Model<unknown>).find(finalFilter, project, { sort, skip, limit }).populate(populate).exec()
+        const documents = (await (server.models[model] as Model<unknown>).find(finalFilter, project, { sort, skip, limit }).populate(populate).exec()).map(
+          (document): ReturnType<typeof document.toObject> => document.toObject()
+        )
         const count = await server.models[model].countDocuments(finalFilter).exec()
+
+        server.publisher.emit<EventPayload<typeof documents>>(`${target}:list`, { model, operation: 'list', data: documents, count }, query)
         return reply.payload(200, `List of ${model}s retrieved`, documents, count)
-      },
-      preSerialization: async function (request, _reply, payload) {
-        const {
-          auth: { key },
-        } = request
-        const { data, count, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>[]>
-        if (statusCode === 200) {
-          server.publisher.emit(`${target}:list`, { tenant: key?.tenant, data: { data, count } })
-        }
-        return payload
       },
       schema: {
         description: `Query a list of ${model} documents. Querystring is parsed with [qs](https://github.com/ljharb/qs). \
@@ -195,19 +185,11 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         } = request
         const document = await (server.models[model] as Model<unknown>).findById(_id, {}).populate(populate).exec()
         if (!document) throw new ApiError(404, { _id, model: model }, `${model} with _id ${_id} does not exist.`)
+        const original = document.toObject()
         document.set(body as Record<string, unknown>)
-        const saved = await document.save()
+        const saved = (await document.save()).toObject()
+        server.publisher.emit<EventPayload<typeof saved>>(`${target}:update`, { model, operation: 'update', data: saved, original })
         return reply.payload(200, `${model} document ${_id} updated`, saved)
-      },
-      preSerialization: async function (request, _reply, payload) {
-        const {
-          auth: { key },
-        } = request
-        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        if (statusCode === 200) {
-          server.publisher.emit(`${target}:update`, { tenant: key?.tenant, application: data?.application, data })
-        }
-        return payload
       },
       schema: {
         description: `Update properties of a ${model} document by \`_id\`.`,
@@ -235,17 +217,9 @@ const plugin: FastifyPluginCallback<PluginOptions> = async function (server, opt
         // Note: this triggers `findOneAndDelete` query hook
         const document = await (server.models[model] as Model<unknown>).findByIdAndDelete(_id).exec()
         if (!document) throw new ApiError(404, { _id, model: model }, `${model} with _id ${_id} does not exist.`)
-        return reply.payload(200, `${model} document ${_id} deleted`, document)
-      },
-      preSerialization: async function (request, _reply, payload) {
-        const {
-          auth: { key },
-        } = request
-        const { data, statusCode } = payload as Api.Payload<Partial<TenantDocumentSchema & ApplicationDocumentSchema>>
-        if (statusCode === 200) {
-          server.publisher.emit(`${target}:remove`, { tenant: key?.tenant, application: data?.application, data })
-        }
-        return payload
+        const data = document.toObject()
+        server.publisher.emit<EventPayload<typeof data>>(`${target}:remove`, { model, operation: 'remove', data })
+        return reply.payload(200, `${model} document ${_id} deleted`, data)
       },
       schema: {
         description: `Delete a ${model} document by \`_id\`.`,

@@ -1,13 +1,14 @@
 import type { Model } from 'mongoose'
 
-import Permission, { PermissionSchema } from './permission'
-import Role, { RoleSchema } from './role'
-import Logic, { LogicSchema } from './logic'
-import Application, { ApplicationPolicy, ApplicationSchema } from './application'
-import Tenant, { TenantSchema } from './tenant'
-import { Api } from '../@types'
+import Permission, { type PermissionSchema } from './permission'
+import Role, { type RoleSchema } from './role'
+import Logic, { type LogicSchema } from './logic'
+import Application, { type ApplicationPolicy, type ApplicationSchema } from './application'
+import Tenant, { type TenantSchema } from './tenant'
+import Change, { type ChangeSchema } from './change'
+import type { Api } from '../@types'
 
-const models = { Permission, Role, Logic, Application, Tenant } as const
+const models = { Permission, Role, Logic, Application, Tenant, Change } as const
 
 export type ModelName = keyof typeof models
 
@@ -17,6 +18,7 @@ export type Models = {
   Logic: Model<LogicSchema>
   Application: Model<ApplicationSchema>
   Tenant: Model<TenantSchema>
+  Change: Model<ChangeSchema>
 }
 
 export type QueryUtility = {
@@ -32,6 +34,7 @@ export * from './role'
 export * from './logic'
 export * from './application'
 export * from './tenant'
+export * from './change'
 
 interface ModelTag {
   name: ModelName | string
@@ -45,4 +48,5 @@ export const modelTags: ModelTag[] = [
   { name: 'Logic', description: 'implements a rule evaluating the access control context' },
   { name: 'Application', description: 'represents one application or service' },
   { name: 'Tenant', description: 'represents one organization (company)' },
+  { name: 'Change', description: 'is a log of a documents change serving as audit trail' },
 ]

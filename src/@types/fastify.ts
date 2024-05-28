@@ -10,6 +10,7 @@ import { AuthCollect, AuthCollectors, AuthContext, AuthVerifiers } from './auth'
 import { EventPublisher } from './event'
 import type { Server } from 'socket.io'
 import type { AccessCollect, AccessContext } from './access'
+import { ChangeLogger } from './change'
 
 declare module 'fastify' {
   export interface FastifyInstance {
@@ -24,6 +25,7 @@ declare module 'fastify' {
     verifiers: AuthVerifiers
     publisher: EventPublisher
     io: Server
+    change: ChangeLogger<Exclude<ModelName, 'Change'>>
   }
 
   export interface FastifyRequest {

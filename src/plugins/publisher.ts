@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
 import EventEmitter from 'events'
-import { EventPayload, EventListener, EventPublisher as IEventPublisher } from '../@types'
+import { EventListener, EventPublisher as IEventPublisher } from '../@types'
 
 class EventPublisher extends EventEmitter implements IEventPublisher {
-  override emit(event: string | symbol, payload: EventPayload) {
+  override emit<Payload = any>(event: string | symbol, payload: Payload) {
     return super.emit(event, event, payload)
   }
 
-  override on(event: string | symbol, listener: EventListener) {
+  override on<Payload = any>(event: string | symbol, listener: EventListener<Payload>) {
     super.on(event, listener)
     return this
   }

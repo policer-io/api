@@ -15,6 +15,7 @@ import auth from './auth'
 import publisher from './publisher'
 import socket from './socket'
 import access from './access'
+import change from './change'
 
 const plugin: FastifyPluginCallback = fp(
   async function (server) {
@@ -38,6 +39,9 @@ const plugin: FastifyPluginCallback = fp(
 
     // attach models
     await server.register(models)
+
+    // attach change logger plugin
+    await server.register(change)
 
     if (NODE_ENV === 'production') {
       // Security

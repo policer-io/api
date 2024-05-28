@@ -5,6 +5,7 @@ import application from './application'
 import tenant from './tenant'
 import permission from './permission'
 import role from './role'
+import change from './change'
 
 const routes: FastifyPluginCallback = async function (server) {
   // collect all possible authentication information
@@ -18,6 +19,7 @@ const routes: FastifyPluginCallback = async function (server) {
   await server.register(logic, { prefix: '/logics' })
   await server.register(application, { prefix: '/applications' })
   await server.register(tenant, { prefix: '/tenants' })
+  await server.register(change, { prefix: '/changes' })
 }
 
 export default routes

@@ -75,6 +75,7 @@
     "@fastify/helmet": "^11.1.1",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^2.1.0",
+    "deep-object-diff": "^1.1.9",
     "dotenv": "^16.4.1",
     "fastify": "^4.26.0",
     "fastify-plugin": "^4.5.1",
