@@ -4,7 +4,7 @@ import type { Api, DocumentCreate, DocumentRead, DocumentUpdate } from '../@type
 import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
 import { JsonLogicRule } from '../@types/logic'
 
-const logicTypes = ['condition', 'filter', 'projection'] as const
+const logicTypes = ['condition', 'filter', 'projection', 'setter'] as const
 
 /**
  * The `type` of the logic determines the expected return value type

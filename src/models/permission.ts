@@ -15,6 +15,7 @@ const model: FastifyPluginCallback = fp(
         condition: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
         filter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
         projection: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
+        setter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
       },
       {
         optimisticConcurrency: true,
@@ -83,6 +84,17 @@ export interface PermissionSchema<Logic = ObjectIdNullable> {
    * @example null
    */
   projection: Logic
+
+  /**
+   * reference to the Logic returning an object with properties and values to be set on the resource document.
+   *
+   * Document properties such as `createdBy: {{user.id}}` or `organization: {{user.organization}}` can be set that way for example.
+   *
+   * defaults to `null`. If `null` the PDP returns `null`
+   *
+   * @example null
+   */
+  setter: Logic
 }
 
 export type PermissionSchemaExtended<Logic = ObjectIdNullable> = PermissionSchema<Logic> & TenantDocumentSchema & ApplicationDocumentSchema

@@ -19,11 +19,13 @@ const model: FastifyPluginCallback = fp(
             condition: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
             filter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
             projection: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
+            setter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
           },
           merge: {
             condition: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
             filter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
             projection: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
+            setter: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
           },
         },
       },
@@ -56,9 +58,11 @@ const model: FastifyPluginCallback = fp(
                   '$options.global.condition',
                   '$options.global.filter',
                   '$options.global.projection',
+                  '$options.global.setter',
                   '$options.merge.condition',
                   '$options.merge.filter',
                   '$options.merge.projection',
+                  '$options.merge.setter',
                 ],
               },
               pipeline: [
@@ -192,6 +196,45 @@ const model: FastifyPluginCallback = fp(
                   else: null,
                 },
               },
+              'options.global.setter': {
+                $cond: {
+                  if: {
+                    $gt: [
+                      {
+                        $indexOfArray: [
+                          {
+                            $map: {
+                              input: '$optionLogics',
+                              as: 'logic',
+                              in: '$$logic._id',
+                            },
+                          },
+                          '$options.global.setter',
+                        ],
+                      },
+                      -1,
+                    ],
+                  },
+                  then: {
+                    $arrayElemAt: [
+                      '$optionLogics',
+                      {
+                        $indexOfArray: [
+                          {
+                            $map: {
+                              input: '$optionLogics',
+                              as: 'logic',
+                              in: '$$logic._id',
+                            },
+                          },
+                          '$options.global.setter',
+                        ],
+                      },
+                    ],
+                  },
+                  else: null,
+                },
+              },
               'options.merge.condition': {
                 $cond: {
                   if: {
@@ -309,6 +352,45 @@ const model: FastifyPluginCallback = fp(
                   else: null,
                 },
               },
+              'options.merge.setter': {
+                $cond: {
+                  if: {
+                    $gt: [
+                      {
+                        $indexOfArray: [
+                          {
+                            $map: {
+                              input: '$optionLogics',
+                              as: 'logic',
+                              in: '$$logic._id',
+                            },
+                          },
+                          '$options.merge.setter',
+                        ],
+                      },
+                      -1,
+                    ],
+                  },
+                  then: {
+                    $arrayElemAt: [
+                      '$optionLogics',
+                      {
+                        $indexOfArray: [
+                          {
+                            $map: {
+                              input: '$optionLogics',
+                              as: 'logic',
+                              in: '$$logic._id',
+                            },
+                          },
+                          '$options.merge.setter',
+                        ],
+                      },
+                    ],
+                  },
+                  else: null,
+                },
+              },
             },
           },
           {
@@ -332,7 +414,7 @@ const model: FastifyPluginCallback = fp(
                         $lookup: {
                           from: 'logics',
                           let: {
-                            logics: ['$condition', '$filter', '$projection'],
+                            logics: ['$condition', '$filter', '$projection', '$setter'],
                           },
                           pipeline: [
                             {
@@ -465,6 +547,45 @@ const model: FastifyPluginCallback = fp(
                               else: null,
                             },
                           },
+                          setter: {
+                            $cond: {
+                              if: {
+                                $gt: [
+                                  {
+                                    $indexOfArray: [
+                                      {
+                                        $map: {
+                                          input: '$permissionLogics',
+                                          as: 'logic',
+                                          in: '$$logic._id',
+                                        },
+                                      },
+                                      '$setter',
+                                    ],
+                                  },
+                                  -1,
+                                ],
+                              },
+                              then: {
+                                $arrayElemAt: [
+                                  '$permissionLogics',
+                                  {
+                                    $indexOfArray: [
+                                      {
+                                        $map: {
+                                          input: '$permissionLogics',
+                                          as: 'logic',
+                                          in: '$$logic._id',
+                                        },
+                                      },
+                                      '$setter',
+                                    ],
+                                  },
+                                ],
+                              },
+                              else: null,
+                            },
+                          },
                         },
                       },
                       {
@@ -530,6 +651,17 @@ export type ApplicationOptions<Logic = ObjectIdNullable> = {
      * @example null
      */
     projection: Logic
+
+    /**
+     * reference to the Logic returning an object with properties and values to be set on the resource document.
+     *
+     * Document properties such as `createdBy: {{user.id}}` or `organization: {{user.organization}}` can be set that way for example.
+     *
+     * defaults to `null`. If `null` the PDP returns `null`
+     *
+     * @example null
+     */
+    setter: Logic
   }
 
   /** Define logic how to merge filters or projections if multiple apply */
@@ -543,9 +675,9 @@ export type ApplicationOptions<Logic = ObjectIdNullable> = {
      *
      * rules context data provides:
      *
-     * - `filters: Logic[]` - the list of the filter logics that apply
+     * - `items: LogicResult[]` - the list of the result of the evaluated logic items that apply
      * - `operation: string` - the name of the operation the permissions are checked for
-     * - `type: 'global' | 'roles'` - merge is executed when either multiple roles apply (type `'roles'`)
+     * - `type: 'permissions' | 'roles' | 'global'` - merge is executed when either multiple roles apply (type `'roles'`)
      * or global and operation filter are defined (type `'global'`). Use `type` to implement different merge rules
      * for these two scenarios.
      *
@@ -554,15 +686,13 @@ export type ApplicationOptions<Logic = ObjectIdNullable> = {
     condition: Logic
 
     /**
-     * reference to the Logic returning possible DB query filter from multiple filters.
-     *
-     * how to merge filters if multiple apply. It is only executed if more than one filter applies.
+     * how to merge filter results if multiple apply. It is only executed if more than one filter applies.
      *
      * rules context data provides:
      *
-     * - `filters: Logic[]` - the list of the filter logics that apply
+     * - `items: LogicResult[]` - the list of the result of the evaluated logic items that apply
      * - `operation: string` - the name of the operation the permissions are checked for
-     * - `type: 'global' | 'roles'` - merge is executed when either multiple roles apply (type `'roles'`)
+     * - `type: 'permissions' | 'roles' | 'global'` - merge is executed when either multiple roles apply (type `'roles'`)
      * or global and operation filter are defined (type `'global'`). Use `type` to implement different merge rules
      * for these two scenarios.
      *
@@ -571,21 +701,34 @@ export type ApplicationOptions<Logic = ObjectIdNullable> = {
     filter: Logic
 
     /**
-     * how to merge projections if multiple apply. `mergeProjectios()` is only executed if more than one project applies.
-     *
-     * how to merge filters if multiple apply. It is only executed if more than one filter applies.
+     * how to merge projection results if multiple apply. It is only executed if more than one filter applies.
      *
      * rules context data provides:
      *
-     * - `filters: Logic[]` - the list of the projection logics that apply
+     * - `items: LogicResult[]` - the list of the result of the evaluated logic items that apply
      * - `operation: string` - the name of the operation the permissions are checked for
-     * - `type: 'global' | 'roles'` - merge is executed when either multiple roles apply (type `'roles'`)
+     * - `type: 'permissions' | 'roles' | 'global'` - merge is executed when either multiple roles apply (type `'roles'`)
      * or global and operation filter are defined (type `'global'`). Use `type` to implement different merge rules
      * for these two scenarios.
      *
      * @example null
      */
     projection: Logic
+
+    /**
+     * how to merge setter results if multiple apply. It is only executed if more than one filter applies.
+     *
+     * rules context data provides:
+     *
+     * - `items: LogicResult[]` - the list of the result of the evaluated logic items that apply
+     * - `operation: string` - the name of the operation the permissions are checked for
+     * - `type: 'permissions' | 'roles' | 'global'` - merge is executed when either multiple roles apply (type `'roles'`)
+     * or global and operation filter are defined (type `'global'`). Use `type` to implement different merge rules
+     * for these two scenarios.
+     *
+     * @example null
+     */
+    setter: Logic
   }
 }
 
