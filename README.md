@@ -1,6 +1,6 @@
 # Policer API
 
-[![GitLab Status](https://git.embrio.tech/embrio/policer/api/badges/main/pipeline.svg)](https://git.embrio.tech/embrio/policer/api/pipelines)
+[![Pipeline](https://github.com/policer-io/api/actions/workflows/test.yml/badge.svg)](https://github.com/policer-io/api/actions/workflows/test.yml)
 [![fastify](https://img.shields.io/static/v1?label=built+with&message=fastify&color=363636)](https://www.fastify.io/)
 [![Docker](https://img.shields.io/static/v1?label=shipped+with&message=Docker&color=287cf9)](https://www.docker.com/)
 [![embrio.tech](https://img.shields.io/static/v1?label=by&message=EMBRIO.tech&color=24ae5f)](https://embrio.tech)
