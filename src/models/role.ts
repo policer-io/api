@@ -2,6 +2,7 @@ import type { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
 import type { Api, DocumentCreate, DocumentRead, DocumentUpdate, ObjectId } from '../@types'
 import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
+import { HydratedDocument } from 'mongoose'
 
 const model: FastifyPluginCallback = fp(
   async function (server) {
@@ -13,7 +14,24 @@ const model: FastifyPluginCallback = fp(
         name: { type: String, required: true },
         description: { type: String, default: null },
         permissions: { type: [Schema.Types.ObjectId], ref: 'Permission', default: (): ObjectId[] => [] },
-        inherits: { type: [Schema.Types.ObjectId], ref: 'Role', default: (): ObjectId[] => [] },
+        inherits: {
+          type: [String],
+          default: (): ObjectId[] => [],
+          validate: {
+            message: 'Can only inherit existing roles',
+            validator: async function (this: HydratedDocument<RoleSchema>, inherits: string[]) {
+              if (!inherits.length) return true
+              const existing = (
+                await server.models.Role.find({
+                  application: this.get('application'),
+                  tenant: this.get('tenant'),
+                  name: { $ne: this.get('name') },
+                }).exec()
+              ).map((item) => item.get('name'))
+              return inherits.every((item) => existing.includes(item))
+            },
+          },
+        },
       },
       {
         optimisticConcurrency: true,
@@ -62,7 +80,9 @@ export interface RoleSchema<Permission = ObjectId> {
    */
   name: string
 
-  /** @example null */
+  /**
+   * @example null
+   */
   description: Description | null
 
   /**
@@ -71,9 +91,11 @@ export interface RoleSchema<Permission = ObjectId> {
   permissions: Permission[]
 
   /**
-   * references to parent roles that are inherited by this role
+   * names of the parent roles that are inherited by this role
+   *
+   * @example ["employee"]
    */
-  inherits: ObjectId[]
+  inherits: string[]
 }
 
 export type RoleSchemaExtended<Permission = ObjectId> = RoleSchema<Permission> & TenantDocumentSchema & ApplicationDocumentSchema
@@ -82,4 +104,4 @@ export type RoleRead = DocumentRead<RoleSchemaExtended>
 export type RoleItemResponse = Api.ItemResponse<RoleRead>
 export type RoleListResponse = Api.ListResponse<RoleRead>
 export type RoleCreate = DocumentCreate<RoleSchema & ApplicationDocumentSchema, 'name'>
-export type RoleUpdate = DocumentUpdate<RoleSchema>
+export type RoleUpdate = DocumentUpdate<Omit<RoleSchema, 'name'>>

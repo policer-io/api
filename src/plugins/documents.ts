@@ -82,7 +82,7 @@ const plugin: FastifyPluginCallback = fp(
     })
 
     const applicationDocumentSchema = new Schema<ApplicationDocumentSchema>({
-      application: { type: Types.ObjectId, default: null, ref: 'Branch' },
+      application: { type: Types.ObjectId, default: null, ref: 'Application' },
     })
 
     const archivableDocumentSchema = new Schema<ArchivableDocumentSchema>({
