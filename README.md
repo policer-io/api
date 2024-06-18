@@ -7,6 +7,10 @@
 
 An API service to interact with Policer.
 
+## :construction: Work in Progress
+
+**:warning: Not ready to be used in production yet!** [Sign up](https://policer.io/sign-up/) to get notified when ready.
+
 ## :seedling: Staging
 
 The staging API and documentation is available at `tbd`
