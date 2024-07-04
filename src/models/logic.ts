@@ -16,7 +16,9 @@ const logicTypes = ['condition', 'filter', 'projection', 'setter'] as const
  * - `'filter'` - should return anything that describes a query filter on a database resource set
  *
  * - `'projection'` - should return anything that describes which properties of the database resource can be accessed
- */
+ *
+ * - `'setter'`- should return anything that describes fields (keys) and values to be set on the document
+-  */
 type LogicType = (typeof logicTypes)[number]
 
 const model: FastifyPluginCallback = fp(

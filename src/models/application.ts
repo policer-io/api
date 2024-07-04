@@ -701,7 +701,7 @@ export type ApplicationOptions<Logic = ObjectIdNullable> = {
     filter: Logic
 
     /**
-     * how to merge projection results if multiple apply. It is only executed if more than one filter applies.
+     * how to merge projection results if multiple apply. It is only executed if more than one projection applies.
      *
      * rules context data provides:
      *
@@ -716,7 +716,7 @@ export type ApplicationOptions<Logic = ObjectIdNullable> = {
     projection: Logic
 
     /**
-     * how to merge setter results if multiple apply. It is only executed if more than one filter applies.
+     * how to merge setter results if multiple apply. It is only executed if more than one setter applies.
      *
      * rules context data provides:
      *
