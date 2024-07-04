@@ -101,7 +101,7 @@ export type PermissionSchemaExtended<Logic = ObjectIdNullable> = PermissionSchem
 
 export type PermissionSchemaLogicPopulated = PermissionSchemaExtended<LogicRead | Record<string, unknown> | null>
 
-export type PermissionRead = DocumentRead<PermissionSchemaExtended>
+export type PermissionRead<Logic = ObjectIdNullable> = DocumentRead<PermissionSchemaExtended<Logic>>
 export type PermissionItemResponse = Api.ItemResponse<PermissionRead>
 export type PermissionListResponse = Api.ListResponse<PermissionRead>
 export type PermissionCreate = DocumentCreate<PermissionSchema & ApplicationDocumentSchema, 'name' | 'application'>

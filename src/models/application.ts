@@ -1,8 +1,8 @@
 import type { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
-import type { Api, DocumentCreate, DocumentRead, DocumentUpdate, ObjectIdNullable, Policy } from '../@types'
+import type { Api, DocumentCreate, DocumentRead, DocumentUpdate, ObjectIdNullable } from '../@types'
 import { TenantDocumentSchema } from '../plugins/documents'
-import { LogicRead } from '.'
+import type { LogicRead, PermissionRead, RoleRead } from '.'
 import { PipelineStage } from 'mongoose'
 import { ApiError } from '../helpers'
 
@@ -751,6 +751,11 @@ export type ApplicationSchemaExtended = ApplicationSchema & TenantDocumentSchema
 
 export type ApplicationSchemaLogicPopulated = Omit<ApplicationSchemaExtended, 'options'> & {
   options: ApplicationOptions<LogicRead | Record<string, unknown> | null>
+}
+
+export interface Policy {
+  // TODO: type this
+  roles: RoleRead<PermissionRead<LogicRead | Record<string, unknown> | null>>[]
 }
 
 export type ApplicationRead = DocumentRead<ApplicationSchemaExtended>

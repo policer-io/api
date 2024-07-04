@@ -100,7 +100,7 @@ export interface RoleSchema<Permission = ObjectId> {
 
 export type RoleSchemaExtended<Permission = ObjectId> = RoleSchema<Permission> & TenantDocumentSchema & ApplicationDocumentSchema
 
-export type RoleRead = DocumentRead<RoleSchemaExtended>
+export type RoleRead<Permission = ObjectId> = DocumentRead<RoleSchemaExtended<Permission>>
 export type RoleItemResponse = Api.ItemResponse<RoleRead>
 export type RoleListResponse = Api.ListResponse<RoleRead>
 export type RoleCreate = DocumentCreate<RoleSchema & ApplicationDocumentSchema, 'name'>

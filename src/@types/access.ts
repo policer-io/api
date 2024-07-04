@@ -6,7 +6,7 @@ import { Api } from './api'
 import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
 import type { ModelName } from '../models'
 
-export type Role = (typeof roleNames)[number]
+export type RoleName = (typeof roleNames)[number]
 
 export interface AccessDocumentSchema
   extends ReturnType<HydratedDocument<unknown>['toObject']>,
@@ -19,7 +19,7 @@ export interface AccessContext {
   operation?: string
   server: FastifyInstance
   body?: unknown | undefined
-  roles: Role[]
+  roles: RoleName[]
   tenant: Types.ObjectId | null
   auth?: Partial<AuthContext>
   params?: Partial<Api.IdParam>

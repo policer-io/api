@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest, RouteGenericInterface } from 'fastify'
-import type { Role } from './access'
+import type { RoleName } from './access'
 
 import { Api } from './api'
 
@@ -46,12 +46,12 @@ export interface AuthTokenPayload {
   sub: string
   /** the tenant of the user */
   ten: string | null
-  roles: Role[]
+  roles: RoleName[]
 }
 
 export interface AuthUser {
   // TODO: finalize
   id: string
-  roles: Role[]
+  roles: RoleName[]
   tenant: string | null
 }
