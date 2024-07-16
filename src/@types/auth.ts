@@ -1,18 +1,20 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest, RouteGenericInterface } from 'fastify'
+import type { FastifyReply, FastifyRequest, RouteGenericInterface } from 'fastify'
 import type { RoleName } from './access'
 
-import { Api } from './api'
-
-// TODO: remove from here, belongs to access control
-export interface RouteVerifiable {
-  Params: Partial<Api.IdParam>
-  Querystring: Partial<Api.ListQuery>
-}
+import { ObjectId } from './models'
+// import { DecodedIdToken } from 'firebase-admin/auth'
+import { UserClaims } from './firebase'
 
 export type VerifierName = 'requirePublic' | 'requireOAuthUser' | 'requireApiKey'
 
+export type AuthVerifier<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> = (
+  // this: FastifyInstance,
+  request: FastifyRequest<RouteGeneric>,
+  reply: FastifyReply
+) => Promise<void>
+
 export type AuthVerifiers<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> = {
-  [verifier in VerifierName]: (this: FastifyInstance, request: FastifyRequest<RouteGeneric>, reply: FastifyReply) => Promise<void>
+  [verifier in VerifierName]: AuthVerifier<RouteGeneric>
 }
 
 export type CollectorName = 'collectOAuthUser' | 'collectApiKey'
@@ -30,6 +32,11 @@ export type AuthCollect<RouteGeneric extends RouteGenericInterface = RouteGeneri
   collectors: AuthCollector<RouteGeneric>[]
 ) => AuthCollector<RouteGeneric>
 
+export type AuthVerify<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> = (
+  verifiers: AuthVerifier<RouteGeneric>[],
+  options?: { relation?: 'or' | 'and' }
+) => AuthVerifier<RouteGeneric>
+
 export interface AuthContext {
   user?: AuthUser
 
@@ -40,18 +47,13 @@ export interface AuthContext {
     | undefined
 }
 
-export interface AuthTokenPayload {
-  active: boolean
-  applicationId: string
-  sub: string
-  /** the tenant of the user */
-  ten: string | null
-  roles: RoleName[]
-}
+// TODO: import from 'firebase-admin/auth'
+type DecodedIdToken = Record<string, unknown>
+export interface AuthTokenPayload extends DecodedIdToken, UserClaims {}
 
 export interface AuthUser {
-  // TODO: finalize
-  id: string
+  uid: string
   roles: RoleName[]
-  tenant: string | null
+  tenant: ObjectId<string> | null
+  applications: ObjectId<string>[]
 }

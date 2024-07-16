@@ -2,7 +2,7 @@ import type { FastifyPluginCallback, FastifyRequest } from 'fastify'
 import fp from 'fastify-plugin'
 import fauth from '@fastify/auth'
 import { ApiError } from '../helpers'
-import type { AuthCollect, AuthCollectors, AuthVerifiers, RouteVerifiable } from '../@types'
+import type { AuthCollect, AuthCollectors, AuthVerifiers, AuthVerify, RouteVerifiable } from '../@types'
 import { APP_API_KEY } from '../config'
 
 const plugin: FastifyPluginCallback = fp(
@@ -29,9 +29,10 @@ const plugin: FastifyPluginCallback = fp(
 
           if (active) {
             request.auth.user = {
-              id: 'tbd',
+              uid: 'tbd',
               tenant: (typeof requestTenant === 'string' && requestTenant) || 'tbd',
               roles: [],
+              applications: [],
             }
           }
 
@@ -74,6 +75,25 @@ const plugin: FastifyPluginCallback = fp(
             return collector(request, reply)
           })
         )
+      }
+    })
+
+    server.decorate<AuthVerify>('authVerify', function (verifiers, options = {}) {
+      const { relation = 'or' } = options
+      if (relation === 'and') {
+        return async function (request, reply) {
+          await Promise.all(verifiers.map((verifier) => verifier(request, reply)))
+        }
+      }
+      return async function (request, reply) {
+        try {
+          await Promise.any(verifiers.map((verifier) => verifier(request, reply)))
+        } catch (error) {
+          if (error instanceof AggregateError) {
+            throw error.errors[0]
+          }
+          throw error
+        }
       }
     })
 

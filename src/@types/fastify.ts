@@ -9,7 +9,7 @@ import { Api } from './api'
 import { AuthCollect, AuthCollectors, AuthContext, AuthVerifiers } from './auth'
 import { EventPublisher } from './event'
 import type { Server } from 'socket.io'
-import type { AccessCollect, AccessContext } from './access'
+import type { AccessCollect, RequestAccess } from './access'
 import { ChangeLogger } from './change'
 
 declare module 'fastify' {
@@ -32,7 +32,7 @@ declare module 'fastify' {
     /** an object to store the auth context and its attributes */
     auth: AuthContext
     /** and object to store all attributes and context for access control */
-    access: AccessContext
+    access: RequestAccess
     model?: ModelName
   }
 

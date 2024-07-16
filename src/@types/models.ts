@@ -6,12 +6,13 @@
  * @example "507f1f77bcf86cd799439022"
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ObjectId = any
+export type ObjectId<Type = any> = Type
 
 /**
  * @nullable
  */
-export type ObjectIdNullable = ObjectId
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ObjectIdNullable<Type = any> = ObjectId<Type> | null
 
 /**
  * user identifier

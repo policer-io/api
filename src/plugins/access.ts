@@ -1,75 +1,121 @@
 import { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
-import type { Model } from 'mongoose'
-import { AccessCollect, AccessContext, AccessDocumentSchema, RouteAccessControlable } from '../@types'
+import type { Model, FilterQuery, ProjectionType, ObjectId } from 'mongoose'
+import { AccessCan, AccessCollect, AccessContext, AccessSetter, RequestAccess, RoleName, RouteAccessControlable } from '../@types'
 import { ApiError } from '../helpers'
+import PDP from '@policer-io/pdp-ts'
+import { policy } from '../config'
 
 const plugin: FastifyPluginAsync = async function (server) {
   server.log.debug('Access Control plugin registering...')
 
-  server.decorateRequest<AccessContext | null>('access', null)
+  server.decorateRequest<RequestAccess | null>('access', null)
 
-  // TODO: implement
+  const pdp = await PDP.create<AccessContext, RoleName, FilterQuery<unknown>, ProjectionType<unknown>, AccessSetter>({
+    applicationId: 'offline',
+    policy,
+  })
+
+  // Decorate Access Context Collector
   server.decorate<AccessCollect<RouteAccessControlable>>('accessCollect', async function (request) {
-    const { params, auth, query, body, method } = request
+    const { params, auth, query, body, method, headers } = request
     const { user, key } = auth
 
-    request.access = {
-      server,
-      body,
-      roles: [],
-      tenant:
-        (user?.tenant && new server.mongoose.Types.ObjectId(user.tenant)) ||
-        (key?.tenant?.toString() && new server.mongoose.Types.ObjectId(key.tenant.toString())) ||
-        null,
-      auth,
-      params,
-      query,
-    }
+    // set roles
+    const roles: RoleName[] = []
+    // if API key, use god role for now TODO: change this. use scope or manage key role in DB.
+    if (key) roles.push('god')
+    // if OAuth2 user, use OAuth2 role
+    if (user?.roles) roles.push(...user.roles)
 
-    // // if request on user document
-    // if (params.id) {
-    //   const user = await server.identity.getUserById(params.id)
-    //   if (user.registrations?.length !== 1) throw new ApiError(500, { user }, 'User has more than one registration!')
-    //   request.access.userDocument = user
-    // }
+    // get tenant from header if allowed
+    const { grant: canWithoutTenant } = roles.length ? pdp.can(roles, 'global:withoutTenant') : { grant: false }
+    const { grant: canOverwriteTenant } = roles.length ? pdp.can(roles, 'global:overwriteTenant') : { grant: false }
+    const { 'app-tenant-id': headerTenant } = headers
+    if (headerTenant && typeof headerTenant !== 'string') {
+      throw new ApiError(400, { 'App-Tenant-Id': headerTenant }, 'App-Tenant-Id has the wrong format!')
+    }
+    server.log.debug({ canOverwriteTenant, canWithoutTenant, headerTenant }, 'overwrite header tenant')
+
+    // initialize access context
+    request.access = {
+      context: {
+        tenant: canOverwriteTenant && headerTenant ? headerTenant : user?.tenant ?? key?.tenant ?? null,
+        canWithoutTenant,
+        roles,
+        applications: user?.applications ?? [],
+        auth,
+        params,
+        query,
+        body,
+        method,
+      },
+    }
 
     // if document _id, collect document information
     if (params._id) {
       if (!request.model) throw new ApiError(500, undefined, 'Can not collect document access context. Model name is undefined on request.')
-      const document = (await (server.models[request.model] as unknown as Model<AccessDocumentSchema>)?.findById(params._id).exec())?.toObject()
-      request.access.document = document && { ...document, model: request.model }
-    }
+      const document = (
+        await (server.models[request.model] as unknown as Model<{ tenant?: ObjectId | null; application?: ObjectId }>).findById(params._id).exec()
+      )?.toObject()
 
-    // if API key, use god role for now TODO: change this. use scope or manage key role in DB.
-    if (key) request.access.roles.push('god')
-    // if OAuth2 user, use OAuth2 role
-    if (user?.roles) request.access.roles.push(...user.roles)
-    // no role identified, use customer role
-    if (!request.access.roles.length) request.access.roles.push('enforcer')
-
-    const isGod = request.access.roles.includes('god')
-
-    // extend request body with additional information
-    if (request.body) {
-      if (!isGod || (isGod && !(request.body as Record<string, unknown>)['tenant'])) {
-        ;(request.body as Record<string, unknown>)['tenant'] = request.access.tenant || null
-      }
-      if (user) {
-        if (method === 'POST') {
-          server.log.debug({ user: user?.id }, 'set createdBy on body')
-          ;(request.body as Record<string, unknown>)['createdBy'] = user?.id || null
-        }
-        if (method === 'PATCH' || method === 'PUT') {
-          server.log.debug({ user: user?.id }, 'set updatedBy on body')
-          ;(request.body as Record<string, unknown>)['updatedBy'] = user?.id || null
-        }
+      request.access.context.document = document && {
+        ...document,
+        _id: document._id.toString(),
+        tenant: document.tenant?.toString() ?? null,
+        application: document.application?.toString(),
+        model: request.model,
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { server: _server, body: _body, document, ...rest } = request.access
-    server.log.debug({ ...rest, document: document?._id, hasBody: !!_body }, 'collected access context')
+    // if user uid, collect user info
+    if (params.uid) {
+      // TODO:
+      // const userDocument = await server.firebase.authAdmin.getUser(params.uid)
+
+      // request.access.context.document = {
+      //   model: 'User',
+      //   uid: userDocument.uid,
+      //   tenant: (userDocument.customClaims?.['tenant'] as string | undefined) ?? null,
+      //   roles: (userDocument.customClaims?.['roles'] as RoleName[] | undefined) ?? [],
+      // }
+    }
+
+    const { body: _body, document, ...rest } = request.access.context
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    server.log.debug({ ...rest, document: document?._id || document?.uid, hasBody: !!_body }, 'collected access context')
+  })
+
+  // Decorate Access Can Checker
+  server.decorate<AccessCan<RouteAccessControlable>>('can', (operation) => {
+    return async function (request) {
+      const { auth, access, method } = request
+      const {
+        context: { roles, tenant, applications },
+      } = access
+      const [target] = operation.split(':')
+      if (!roles.length) throw new ApiError(500, { auth }, 'No roles defined!')
+      server.log.debug({ ...access.context, operation }, 'Check access permission attributes')
+      const { grant, filter, projection, setter } = pdp.can(roles, operation, { ...access.context, operation, target })
+
+      server.log.debug({ roles, operation, grant, filter, projection, setter }, 'evaluated access permission')
+
+      if (!grant) throw new ApiError(403, { operation, grant, access: { tenant, roles, applications } }, 'Not the right permissions!')
+
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      if (request.body && setter && (request.params._id || request.params.uid || method === 'POST')) {
+        Object.entries(setter).forEach(([key, value]) => {
+          if (value) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            server.log.debug({ value, key }, 'set body property with setter')
+            ;(request.body as Record<string, unknown>)[key] = value
+          }
+        })
+      }
+
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      request.access.query = filter || projection ? { filter: filter ?? undefined, projection: projection ?? undefined } : undefined
+    }
   })
 
   server.log.debug('Access Control plugin registerd')

@@ -115,13 +115,13 @@ export declare namespace Api {
   }
 
   export interface UserIdParam {
-    /**
-     * User unique `id` as UUID id.
+     /**
+     * firebase unique user id (`uid`)
      *
-     * @format uuid
-     * @example 5eff62cb-2c5c-4318-8c2b-2bf32b370013
+     * @example lPH2TpSJ7WYm4JhqfzyjVXeyaLC1
      */
-    id: string
+
+    uid: string
   }
 
   export interface HashParam {
