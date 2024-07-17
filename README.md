@@ -19,7 +19,7 @@ The staging API and documentation is available at `tbd`
 
 ## :construction_worker: Development
 
-We highly recommend to develop using the overarching policer-io/policer-io> repository. It allows to run all required services (frontend and backend) with [Docker Compose](https://docs.docker.com/compose/).
+We highly recommend to develop by using the main [policer.io repository](https://github.com/policer-io/policer-io). It allows to run all required services (frontend and backend) with [Docker Compose](https://docs.docker.com/compose/).
 
 If you prefer to run this service without Docker the following instructions get you started.
 
