@@ -58,4 +58,4 @@ This repository uses commitlint to enforce commit message conventions. You have 
 
 ## License
 
-unlicensed
+The code is licensed under the [AGPLv3](/LICENSE) License.
