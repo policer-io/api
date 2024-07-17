@@ -1,4 +1,4 @@
-![logo-light-long-2](https://github.com/policer-io/.github/assets/16650977/c39ad4a3-7a5c-40b6-9a69-5be3a3c50255)
+[![logo-light-long-2](https://github.com/policer-io/.github/assets/16650977/c39ad4a3-7a5c-40b6-9a69-5be3a3c50255)](https://policer.io)
 
 # Policy Center (API)
 
@@ -8,6 +8,10 @@ Manage, test and store your your permissions and access control logic with JSON,
 [![fastify](https://img.shields.io/static/v1?label=built+with&message=fastify&color=363636)](https://www.fastify.io/)
 [![Docker](https://img.shields.io/static/v1?label=shipped+with&message=Docker&color=287cf9)](https://www.docker.com/)
 [![embrio.tech](https://img.shields.io/static/v1?label=by&message=EMBRIO.tech&color=24ae5f)](https://embrio.tech)
+
+## :gem: Key Benefits
+
+[Learn more](https://policer.io/#features) about the benefits and features of policer.io!
 
 ## :construction: Work in Progress
 
