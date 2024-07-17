@@ -52,7 +52,7 @@ This repository uses commitlint to enforce commit message conventions. You have 
 
 ## Contact
 
-git@github.com:policer-io/policer-io.git
+Talk to us via [policer.io](https://policer.io/contact/)
 
 ## License
 
