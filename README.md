@@ -1,11 +1,13 @@
-# Policer API
+![logo-light-long-2](https://github.com/policer-io/.github/assets/16650977/c39ad4a3-7a5c-40b6-9a69-5be3a3c50255)
+
+# Policy Center (API)
+
+Manage, test and store your your permissions and access control logic with JSON, independent of your app's code, at a central place.
 
 [![Pipeline](https://github.com/policer-io/api/actions/workflows/test.yml/badge.svg)](https://github.com/policer-io/api/actions/workflows/test.yml)
 [![fastify](https://img.shields.io/static/v1?label=built+with&message=fastify&color=363636)](https://www.fastify.io/)
 [![Docker](https://img.shields.io/static/v1?label=shipped+with&message=Docker&color=287cf9)](https://www.docker.com/)
 [![embrio.tech](https://img.shields.io/static/v1?label=by&message=EMBRIO.tech&color=24ae5f)](https://embrio.tech)
-
-An API service to interact with Policer.
 
 ## :construction: Work in Progress
 
@@ -17,7 +19,7 @@ The staging API and documentation is available at `tbd`
 
 ## :construction_worker: Development
 
-We highly recommend to develop using the overarching embrio/policer/development> repository. It allows to run all required services (frontend and backend) with [Docker Compose](https://docs.docker.com/compose/).
+We highly recommend to develop using the overarching policer-io/policer-io> repository. It allows to run all required services (frontend and backend) with [Docker Compose](https://docs.docker.com/compose/).
 
 If you prefer to run this service without Docker the following instructions get you started.
 
