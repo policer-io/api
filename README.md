@@ -9,6 +9,12 @@ Manage, test and store your your permissions and access control logic with JSON,
 [![Docker](https://img.shields.io/static/v1?label=shipped+with&message=Docker&color=287cf9)](https://www.docker.com/)
 [![embrio.tech](https://img.shields.io/static/v1?label=by&message=EMBRIO.tech&color=24ae5f)](https://embrio.tech)
 
+## :star: Give us a Star!
+
+### Support the project by giving it a GitHub Star!
+
+![GitHub Repo stars](https://img.shields.io/github/stars/policer-io/api?label=GitHub%20%E2%AD%90%EF%B8%8F)
+
 ## :gem: Key Benefits
 
 [Learn more](https://policer.io/#features) about the benefits and features of policer.io!
