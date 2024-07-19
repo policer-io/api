@@ -13,7 +13,7 @@ Manage, test and store your your permissions and access control logic with JSON,
 
 ### Support the project by giving it a GitHub Star!
 
-![GitHub Repo stars](https://img.shields.io/github/stars/policer-io/api?label=GitHub%20%E2%AD%90%EF%B8%8F)
+[![GitHub Repo stars](https://img.shields.io/github/stars/policer-io/api?label=GitHub%20%E2%AD%90%EF%B8%8F)](https://github.com/policer-io/api)
 
 ## :gem: Key Benefits
 
