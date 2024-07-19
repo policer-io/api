@@ -5,6 +5,7 @@ dotenv.config()
 export const {
   NODE_ENV = 'development',
   PORT = '5000',
+  HOST = '0.0.0.0',
   OPS_ENV = 'local',
   npm_package_version = '0.0.0',
   DB_URI = 'mongodb://mongodb:mongodb@localhost:27017/pharmassist?authSource=admin',
