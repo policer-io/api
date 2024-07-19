@@ -22,9 +22,4 @@ export const {
   IDENTITY_API_URL = 'http://identity:9011',
   IDENTITY_API_KEY,
   STAGE_DNS_NAME = 'localhost',
-  HCI_ORGID,
-  HCI_APIKEY,
-  HCI_ORG = 'EMBRIO GmbH',
-  HCI_DOC_URL = 'https://documedis.hcisolutions.ch/2020-01/api',
-  HCI_CDS_URL = 'https://int.ce.documedis.hcisolutions.ch/cds/2021-01/api',
 } = process.env
