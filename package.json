@@ -20,7 +20,7 @@
     "schema": "ts-json-schema-generator --expose none --no-ref-encode --no-top-ref --path 'src/**/*.ts' --tsconfig tsconfig.json",
     "prepare": "husky install",
     "release": "yarn version --no-commit-hooks \"--$(conventional-recommended-bump -p conventionalcommits)\"",
-    "release:pre": "yarn version \"--pre$(conventional-recommended-bump -p conventionalcommits)\"",
+    "release:pre": "yarn version --no-commit-hooks \"--pre$(conventional-recommended-bump -p conventionalcommits)\"",
     "changelog:preview": "conventional-changelog -p conventionalcommits -u",
     "changelog:latest": "conventional-changelog -p conventionalcommits -r 2",
     "version": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s && git add CHANGELOG.md"
