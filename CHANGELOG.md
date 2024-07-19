@@ -1,3 +1,8 @@
+## [0.1.2-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.1-alpha.0...v0.1.2-alpha.0) (2024-07-19)
+
+### Bug Fixes
+
+* add missing production dependency ([e4d7a69](https://git.embrio.tech:2224/embrio/policer/api/commit/e4d7a696364d716003d56db47062c74c0802701b))
 ## [0.1.1-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.0-alpha.0...v0.1.1-alpha.0) (2024-07-19)
 
 ### Bug Fixes
