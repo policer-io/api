@@ -15,8 +15,10 @@ const plugin: FastifyPluginAsync<PluginOptions> = async function (server, option
   await server.register(swagger, {
     openapi: {
       info: {
-        title: `policer API ${OPS_ENV.charAt(0).toUpperCase() + OPS_ENV.slice(1)}`,
-        description: 'An API service to interact with policer data.',
+        title: `Policy Center API (${OPS_ENV.charAt(0).toUpperCase() + OPS_ENV.slice(1)})`,
+        // prettier-ignore
+        // eslint-disable-next-line max-len
+        description: 'Manage, test and store your your permissions and access control logic with JSON, independent of your app\'s code, at a central place.\n### [Learn more!](https://policer.io)',
         version: `v${npm_package_version}`,
       },
       components: {

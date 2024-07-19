@@ -15,7 +15,7 @@ const routes: FastifyPluginCallback = async function (server) {
       content: logo,
     },
     theme: {
-      title: 'API Docs | policer',
+      title: 'API Docs | Policy Center | policer.io',
       css: [
         {
           filename: 'style.css',
