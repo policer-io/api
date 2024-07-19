@@ -12,7 +12,7 @@ interface HealthGetInterface extends RouteGenericInterface {
 }
 
 const routes: FastifyPluginCallback = async function (server) {
-  if (OPS_ENV === 'local') {
+  if (OPS_ENV === 'local' || NODE_ENV === 'production') {
     server.get<RootGetRouteInterface>('/', { schema: { hide: true } }, async (request, reply) => {
       const { query } = request
       if (query.error) throw new ApiError(Number(query.status) || 400, { query }, 'The query param caused an error!')
