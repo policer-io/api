@@ -1,6 +1,6 @@
 {
   "name": "policer-api",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.1-alpha.0",
   "description": "An API service to interact with Policer",
   "main": "dist/index.js",
   "repository": "ssh://git@git.embrio.tech:2224/embrio/policer/api.git",

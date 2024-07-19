@@ -1,3 +1,8 @@
+## [0.1.1-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.0-alpha.0...v0.1.1-alpha.0) (2024-07-19)
+
+### Bug Fixes
+
+* remove unused env variables ([ef80be9](https://git.embrio.tech:2224/embrio/policer/api/commit/ef80be969fe3129aeeec78446519fbf9454a7950))
 ## 0.1.0-alpha.0 (2024-07-19)
 
 ### Features
