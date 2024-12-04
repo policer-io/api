@@ -1,3 +1,4 @@
+## [0.1.3-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.2-alpha.0...v0.1.3-alpha.0) (2024-12-04)
 ## [0.1.2-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.1-alpha.0...v0.1.2-alpha.0) (2024-07-19)
 
 ### Bug Fixes
