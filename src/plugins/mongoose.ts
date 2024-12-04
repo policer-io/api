@@ -12,8 +12,9 @@ const plugin: FastifyPluginCallback = fp(
     const {
       host,
       port,
-      db: { namespace },
+      db,
     } = mongoose.connection
+    const { namespace } = db || {}
     server.log.info('MongoDB connection initialized')
     server.log.debug({ host, port, namespace }, 'MongoDB connection')
 

@@ -1,11 +1,11 @@
 import type { Model } from 'mongoose'
 
-import Permission, { type PermissionSchema } from './permission'
-import Role, { type RoleSchema } from './role'
-import Logic, { type LogicSchema } from './logic'
-import Application, { type ApplicationPolicy, type ApplicationSchema } from './application'
+import Permission, { type PermissionSchemaExtended } from './permission'
+import Role, { type RoleSchemaExtended } from './role'
+import Logic, { type LogicSchemaExtended } from './logic'
+import Application, { type ApplicationPolicy, type ApplicationSchemaExtended } from './application'
 import Tenant, { type TenantSchema } from './tenant'
-import Change, { type ChangeSchema } from './change'
+import Change, { type ChangeSchemaExtended } from './change'
 import type { Api } from '../@types'
 
 const models = { Permission, Role, Logic, Application, Tenant, Change } as const
@@ -13,12 +13,12 @@ const models = { Permission, Role, Logic, Application, Tenant, Change } as const
 export type ModelName = keyof typeof models
 
 export type Models = {
-  Permission: Model<PermissionSchema>
-  Role: Model<RoleSchema>
-  Logic: Model<LogicSchema>
-  Application: Model<ApplicationSchema>
+  Permission: Model<PermissionSchemaExtended>
+  Role: Model<RoleSchemaExtended>
+  Logic: Model<LogicSchemaExtended>
+  Application: Model<ApplicationSchemaExtended>
   Tenant: Model<TenantSchema>
-  Change: Model<ChangeSchema>
+  Change: Model<ChangeSchemaExtended>
 }
 
 export type QueryUtility = {

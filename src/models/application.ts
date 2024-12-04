@@ -11,7 +11,7 @@ const model: FastifyPluginCallback = fp(
     server.log.debug('Application model attaching...')
     const { Schema, model } = server.mongoose
 
-    const schema = new Schema<ApplicationSchema>(
+    const schema = new Schema<ApplicationSchemaExtended>(
       {
         name: { type: String, required: true },
         options: {
@@ -40,7 +40,7 @@ const model: FastifyPluginCallback = fp(
     // application name must be unique for each tenant
     schema.index({ name: 1, tenant: 1 }, { unique: true })
 
-    server.models.Application = model<ApplicationSchema>('Application', schema)
+    server.models.Application = model<ApplicationSchemaExtended>('Application', schema)
 
     // await server.models.Application.syncIndexes()
 

@@ -26,7 +26,7 @@ const model: FastifyPluginCallback = fp(
     server.log.debug('Logic model attaching...')
     const { Schema, model } = server.mongoose
 
-    const schema = new Schema<LogicSchema>(
+    const schema = new Schema<LogicSchemaExtended>(
       {
         name: { type: String, required: true },
         rule: { type: Schema.Types.Mixed, required: true },
@@ -54,7 +54,7 @@ const model: FastifyPluginCallback = fp(
     // logic name must be unique for each tenant and application
     schema.index({ name: 1, tenant: 1, application: 1 }, { unique: true })
 
-    server.models.Logic = model<LogicSchema>('Logic', schema)
+    server.models.Logic = model<LogicSchemaExtended>('Logic', schema)
 
     // await server.models.Logic.syncIndexes()
 

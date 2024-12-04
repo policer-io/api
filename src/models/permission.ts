@@ -9,7 +9,7 @@ const model: FastifyPluginCallback = fp(
     server.log.debug('Permission model attaching...')
     const { Schema, model } = server.mongoose
 
-    const schema = new Schema<PermissionSchema>(
+    const schema = new Schema<PermissionSchemaExtended>(
       {
         name: { type: String, required: true },
         condition: { type: Schema.Types.ObjectId, ref: 'Logic', default: null },
@@ -26,7 +26,7 @@ const model: FastifyPluginCallback = fp(
     schema.add(server.templates.tenantDocumentSchema)
     schema.add(server.templates.applicationDocumentSchema)
 
-    server.models.Permission = model<PermissionSchema>('Permission', schema)
+    server.models.Permission = model<PermissionSchemaExtended>('Permission', schema)
 
     // await server.models.Permission.syncIndexes()
 

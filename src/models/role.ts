@@ -2,14 +2,13 @@ import type { FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
 import type { Api, DocumentCreate, DocumentRead, DocumentUpdate, ObjectId } from '../@types'
 import { ApplicationDocumentSchema, TenantDocumentSchema } from '../plugins/documents'
-import { HydratedDocument } from 'mongoose'
 
 const model: FastifyPluginCallback = fp(
   async function (server) {
     server.log.debug('Role model attaching...')
     const { Schema, model } = server.mongoose
 
-    const schema = new Schema<RoleSchema>(
+    const schema = new Schema<RoleSchemaExtended>(
       {
         name: { type: String, required: true },
         description: { type: String, default: null },
@@ -18,14 +17,14 @@ const model: FastifyPluginCallback = fp(
           type: [String],
           default: (): ObjectId[] => [],
           validate: {
-            message: 'Can only inherit existing roles',
-            validator: async function (this: HydratedDocument<RoleSchema>, inherits: string[]) {
+            message: 'Can only inherit existing roles and not itself',
+            validator: async function (this, inherits: string[]) {
               if (!inherits.length) return true
               const existing = (
                 await server.models.Role.find({
-                  application: this.get('application'),
-                  tenant: this.get('tenant'),
-                  name: { $ne: this.get('name') },
+                  application: this.application,
+                  tenant: this.tenant,
+                  name: { $ne: this.name },
                 }).exec()
               ).map((item) => item.get('name'))
               return inherits.every((item) => existing.includes(item))
@@ -45,7 +44,7 @@ const model: FastifyPluginCallback = fp(
     // role name must be unique for each tenant
     schema.index({ name: 1, tenant: 1, application: 1 }, { unique: true })
 
-    server.models.Role = model<RoleSchema>('Role', schema)
+    server.models.Role = model<RoleSchemaExtended>('Role', schema)
 
     // await server.models.Role.syncIndexes()
 

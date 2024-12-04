@@ -13,7 +13,7 @@ const model: FastifyPluginCallback = fp(
     server.log.debug('Change model attaching...')
     const { Schema, model } = server.mongoose
 
-    const schema = new Schema<ChangeSchema>(
+    const schema = new Schema<ChangeSchemaExtended>(
       {
         document: { type: Schema.Types.ObjectId, required: true },
         modelName: { type: String, required: true },
@@ -48,7 +48,7 @@ const model: FastifyPluginCallback = fp(
     schema.add(server.templates.tenantDocumentSchema)
     schema.add(server.templates.applicationDocumentSchema)
 
-    server.models.Change = model<ChangeSchema>('Change', schema)
+    server.models.Change = model<ChangeSchemaExtended>('Change', schema)
 
     // await server.models.Change.syncIndexes()
 

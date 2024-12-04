@@ -24,9 +24,10 @@ const routes: FastifyPluginCallback = async function (server) {
     const {
       connection: {
         host,
-        db: { namespace },
+        db,
       },
     } = server.mongoose
+    const { namespace } = db || {}
 
     return reply.payload(200, 'I am good. Thanks for asking.', {
       NODE_ENV,
