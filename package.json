@@ -1,6 +1,6 @@
 {
   "name": "policer-api",
-  "version": "0.1.3-alpha.0",
+  "version": "0.1.4-alpha.0",
   "description": "An API service to interact with Policer",
   "main": "dist/index.js",
   "repository": "git@github.com:policer-io/api.git",
