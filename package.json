@@ -78,6 +78,7 @@
     "@fastify/swagger-ui": "^2.1.0",
     "@policer-io/pdp-ts": "^1.0.8",
     "@tsconfig/node20": "^20.1.4",
+    "axios": "^1.12.2",
     "deep-object-diff": "^1.1.9",
     "dotenv": "^16.4.1",
     "fastify": "^4.26.0",
