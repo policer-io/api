@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
 import { Server, ServerOptions } from 'socket.io'
 
-const plugin: FastifyPluginAsync<ServerOptions> = async function (server) {
+const plugin: FastifyPluginAsync = async function (server) {
   server.log.debug('Socket.io plugin registering...')
 
   // TODO: make it work with multiple nodes, see https://socket.io/docs/v4/using-multiple-nodes/

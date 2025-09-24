@@ -2,7 +2,7 @@ import type { FastifyPluginCallback, FastifyRequest } from 'fastify'
 import fp from 'fastify-plugin'
 import fauth from '@fastify/auth'
 import { ApiError } from '../helpers'
-import type { AuthCollect, AuthCollectors, AuthVerifiers, AuthVerify, RouteVerifiable } from '../@types'
+import type { AuthCollect, AuthCollectors, AuthContext, AuthVerifiers, AuthVerify, RouteVerifiable } from '../@types'
 import { APP_API_KEY } from '../config'
 
 const plugin: FastifyPluginCallback = fp(
@@ -10,7 +10,7 @@ const plugin: FastifyPluginCallback = fp(
     server.log.debug('Auth plugin registering...')
 
     // an object to store all authentication attributes.
-    server.decorateRequest('auth', null)
+    server.decorateRequest('auth', { getter: () => ({}) as AuthContext })
 
     const collectors: AuthCollectors<RouteVerifiable> = {
       /** collect the user info from a bearer oauth token */
