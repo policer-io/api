@@ -1,4 +1,4 @@
-FROM node:20.11-alpine as install
+FROM node:22.19-alpine as install
 
 WORKDIR /usr/src/app
 
@@ -6,14 +6,14 @@ COPY package*.json ./
 COPY yarn*.lock ./
 RUN yarn install --production=false
 
-FROM node:20.11-alpine as build
+FROM node:22.19-alpine as build
 
 WORKDIR /usr/src/app
 COPY --from=install /usr/src/app/node_modules ./node_modules
 COPY . .
 RUN yarn build
 
-FROM node:20.11-alpine as prod-install
+FROM node:22.19-alpine as prod-install
 
 WORKDIR /usr/src/app
 
@@ -21,7 +21,7 @@ COPY package*.json ./
 COPY yarn*.lock ./
 RUN yarn install --production=true --frozen-lockfile
 
-FROM node:20.11-alpine as prod-build
+FROM node:22.19-alpine as prod-build
 
 WORKDIR /usr/src/app
 
