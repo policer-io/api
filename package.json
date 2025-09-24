@@ -77,7 +77,7 @@
     "@fastify/helmet": "^11.1.1",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^2.1.0",
-    "@policer-io/pdp-ts": "^1.0.8",
+    "@policer-io/pdp-ts": "^1.0.13",
     "axios": "^1.12.2",
     "deep-object-diff": "^1.1.9",
     "dotenv": "^16.4.1",
