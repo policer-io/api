@@ -1,3 +1,10 @@
+## [0.1.5-alpha.0](https://github.com/policer-io/api/compare/v0.1.4-alpha.0...v0.1.5-alpha.0) (2025-09-24)
+
+### Bug Fixes
+
+* update axios to patch vulnerability ([867d416](https://github.com/policer-io/api/commit/867d41606f8aab6f4d8c2aef9e54b22fd9b00329))
+* update mongoose to patch vulnerability ([645bd38](https://github.com/policer-io/api/commit/645bd3825a72fa6f01f8e6513e9008665301e289))
+* update pdp-ts to patch vulnerabilities ([e671ca8](https://github.com/policer-io/api/commit/e671ca81f6d3279500d8fea7f08c4c4ce0992341))
 ## [0.1.4-alpha.0](https://github.com/policer-io/api/compare/v0.1.3-alpha.0...v0.1.4-alpha.0) (2024-12-04)
 ## [0.1.3-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.2-alpha.0...v0.1.3-alpha.0) (2024-12-04)
 ## [0.1.2-alpha.0](https://git.embrio.tech:2224/embrio/policer/api/compare/v0.1.1-alpha.0...v0.1.2-alpha.0) (2024-07-19)
